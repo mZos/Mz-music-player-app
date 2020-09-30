@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.MainActivity">
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <fragment
+            android:id="@+id/musicNavHostFragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nav_graph" />
+    </FrameLayout>
+
+
+    <View
+        android:id="@+id/dimBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/slidingPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/colorSurface"
+        app:behavior_hideable="false"
+        app:behavior_peekHeight="106dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/playerFragmentContainer"
+            android:name="com.zakariya.mymusicplayer.ui.fragment.PlayerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <fragment
+            android:id="@+id/miniPlayerFragment"
+            android:name="com.zakariya.mymusicplayer.ui.fragment.MiniPlayerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            tools:layout="@layout/fragment_mini_player" />
+
+    </FrameLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:layout_gravity="bottom"
+        app:elevation="0dp"
+        style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
+        app:labelVisibilityMode="labeled"
+        android:background="@color/colorPrimaryDark"
+        app:itemRippleColor="@color/colorAccent"
+        app:itemTextColor="@color/bottom_nav_item_color"
+        app:itemIconTint="@color/bottom_nav_item_color"
+        app:menu="@menu/bottom_navigation_items"
+        tools:layout_height="56dp" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
