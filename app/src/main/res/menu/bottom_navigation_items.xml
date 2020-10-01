@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/songFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_song"
+        android:title="Songs" />
+
+    <item
+        android:id="@+id/albumFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_album"
+        android:title="Albums" />
+
+    <item
+        android:id="@+id/artistFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_song"
+        android:title="Artists" />
+
+    <item
+        android:id="@+id/favouriteFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_favourite"
+        android:title="Favourites" />
+</menu>

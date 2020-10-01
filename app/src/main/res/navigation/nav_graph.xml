@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/songFragment">
+
+    <fragment
+        android:id="@+id/songFragment"
+        android:name="com.zakariya.mymusicplayer.ui.fragment.SongFragment"
+        android:label="fragment_song"
+        tools:layout="@layout/fragment_song" />
+    <fragment
+        android:id="@+id/albumFragment"
+        android:name="com.zakariya.mymusicplayer.ui.fragment.AlbumFragment"
+        android:label="AlbumFragment" />
+    <fragment
+        android:id="@+id/artistFragment"
+        android:name="com.zakariya.mymusicplayer.ui.fragment.ArtistFragment"
+        android:label="ArtistFragment" />
+    <fragment
+        android:id="@+id/favouriteFragment"
+        android:name="com.zakariya.mymusicplayer.ui.fragment.FavouriteFragment"
+        android:label="FavouriteFragment" />
+</navigation>
