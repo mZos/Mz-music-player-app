@@ -4,12 +4,13 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import com.zakariya.mymusicplayer.R
-import com.zakariya.mymusicplayer.util.REQ_CODE
+import com.zakariya.mymusicplayer.util.Constants.REQ_CODE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -29,10 +30,11 @@ class SplashActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, permissions, REQ_CODE)
         } else {
             lifecycleScope.launch(Dispatchers.Main) {
+                Log.i("Splash", "llll")
+                delay(100L)
                 Intent(this@SplashActivity, MainActivity::class.java).also {
-                    delay(500L)
-                    this@SplashActivity.finish()
                     startActivity(it)
+                    this@SplashActivity.finish()
                 }
             }
         }
@@ -50,7 +52,6 @@ class SplashActivity : AppCompatActivity() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     lifecycleScope.launch(Dispatchers.Main) {
                         Intent(this@SplashActivity, MainActivity::class.java).also {
-                            delay(100L)
                             this@SplashActivity.finish()
                             startActivity(it)
                         }

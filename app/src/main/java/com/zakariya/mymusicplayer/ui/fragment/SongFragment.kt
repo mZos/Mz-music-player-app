@@ -13,10 +13,9 @@ import com.zakariya.mymusicplayer.adapter.SongsAdapter
 import com.zakariya.mymusicplayer.repository.SongRepository
 import com.zakariya.mymusicplayer.ui.SongViewModel
 import com.zakariya.mymusicplayer.ui.SongViewModelFactory
-import com.zakariya.mymusicplayer.ui.fragment.PlayerFragment.Companion.mediaPlayer
+import com.zakariya.mymusicplayer.util.Constants.POSITION_KEY
+import com.zakariya.mymusicplayer.util.Constants.PREF_NAME
 import com.zakariya.mymusicplayer.util.OnSongClickListener
-import com.zakariya.mymusicplayer.util.POSITION_KEY
-import com.zakariya.mymusicplayer.util.PREF_NAME
 import kotlinx.android.synthetic.main.fragment_song.*
 
 @Suppress("DEPRECATION")
@@ -51,7 +50,6 @@ class SongFragment : Fragment(R.layout.fragment_song) {
                 Toast.makeText(requireContext(), "clicked", Toast.LENGTH_SHORT).show()
                 currentPlyingSongPosition = position
 
-                mediaPlayer?.reset()
                 with(sharedPreferences.edit()) {
                     putInt(POSITION_KEY, currentPlyingSongPosition)
                     apply()

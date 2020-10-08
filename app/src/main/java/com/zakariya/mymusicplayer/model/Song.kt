@@ -1,6 +1,6 @@
 package com.zakariya.mymusicplayer.model
 
-data class Songs(
+data class Song(
     val id: String,
     val name: String,
     val path: String,

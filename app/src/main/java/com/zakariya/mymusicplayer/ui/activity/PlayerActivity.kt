@@ -5,13 +5,13 @@ import android.os.Bundle
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import com.zakariya.mymusicplayer.R
-import com.zakariya.mymusicplayer.model.Songs
+import com.zakariya.mymusicplayer.model.Song
 
 class PlayerActivity : AppCompatActivity() {
 
     val TAG = "PlayerActivityTest"
 
-    private var listOfSongs: ArrayList<Songs> = arrayListOf()
+    private var listOfSongs: ArrayList<Song> = arrayListOf()
     private var position: Int = -1
 //
 //    companion object {
@@ -76,7 +76,7 @@ class PlayerActivity : AppCompatActivity() {
                 val id = cursor.getString(1)
                 val path = cursor.getString(2)
                 val artistName = cursor.getString(3)
-                val song = Songs(id, title, path, artistName)
+                val song = Song(id, title, path, artistName)
                 listOfSongs.add(song)
             }
             cursor.close()

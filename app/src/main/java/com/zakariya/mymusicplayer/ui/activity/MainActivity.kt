@@ -10,8 +10,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.zakariya.mymusicplayer.R
-import com.zakariya.mymusicplayer.util.POSITION_KEY
-import com.zakariya.mymusicplayer.util.PREF_NAME
+import com.zakariya.mymusicplayer.util.Constants.POSITION_KEY
+import com.zakariya.mymusicplayer.util.Constants.PREF_NAME
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -60,6 +60,8 @@ open class MainActivity : AppCompatActivity() {
 //        }
 
         setContentView(R.layout.activity_main)
+
+
         setUpBottomNavigationNavController()
 
         sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)

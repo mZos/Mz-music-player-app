@@ -6,7 +6,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import com.zakariya.mymusicplayer.model.Song
-import com.zakariya.mymusicplayer.util.baseProjection
+import com.zakariya.mymusicplayer.util.Constants.baseProjection
 
 class SongRepository(private val context: Context) {
 

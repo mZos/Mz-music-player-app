@@ -9,7 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.zakariya.mymusicplayer.R
-import com.zakariya.mymusicplayer.model.Songs
+import com.zakariya.mymusicplayer.model.Song
 import com.zakariya.mymusicplayer.ui.fragment.SongFragment
 import com.zakariya.mymusicplayer.util.OnSongClickListener
 import kotlinx.android.synthetic.main.single_song_item.view.*
@@ -19,7 +19,7 @@ import kotlinx.coroutines.withContext
 
 class SongsAdapter(
     val context: Context,
-    private val songs: ArrayList<Songs>,
+    private val songs: List<Song>,
     private val listener: OnSongClickListener
 ) : RecyclerView.Adapter<SongsAdapter.SongsViewHolder>() {
 
@@ -30,8 +30,10 @@ class SongsAdapter(
     }
 
     override fun onBindViewHolder(holder: SongsViewHolder, position: Int) {
+
         val songs = songs[position]
         holder.itemView.txtSongName.text = songs.name
+        holder.itemView.txtArtistName.text = songs.artistName
 
         SongFragment().lifecycleScope.launch(Dispatchers.IO) {
             val imgByte = getSongThumbnail(songs.path)
@@ -40,8 +42,6 @@ class SongsAdapter(
                     .into(holder.itemView.imgThumbnail)
             }
         }
-
-        holder.itemView.txtArtistName.text = songs.artistName
 
         holder.itemView.setOnClickListener {
             listener.onSongClickListener(position, songs.path)
