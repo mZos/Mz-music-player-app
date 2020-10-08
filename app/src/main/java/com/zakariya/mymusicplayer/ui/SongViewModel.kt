@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 
 class SongViewModel(private val repository: SongRepository) : ViewModel() {
 
-
     private val songs = MutableLiveData<List<Song>>()
     val songLiveData: LiveData<List<Song>> = songs
 
