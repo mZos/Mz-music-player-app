@@ -17,10 +17,20 @@ class SongViewModel(private val repository: SongRepository) : ViewModel() {
     val songLiveData: LiveData<List<Song>> = songs
 
     init {
-        viewModelScope.launch { songs.value = loadSongs.await() }
+        viewModelScope.launch { loadLibraryContent() }
+    }
+
+    private fun loadLibraryContent() = viewModelScope.launch {
+        songs.value = loadSongs.await()
     }
 
     private val loadSongs: Deferred<List<Song>>
         get() = viewModelScope.async(Dispatchers.IO) { repository.getAllSongs() }
 
+    fun forceReload() = viewModelScope.launch {
+        val list = loadSongs.await()
+        if (songs.value!!.size != list.size) {
+            songs.value = list
+        }
+    }
 }

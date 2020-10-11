@@ -1,8 +1,8 @@
 package com.zakariya.mymusicplayer.ui.activity
 
-import android.content.Context
-import android.content.SharedPreferences
+import android.content.*
 import android.os.Bundle
+import android.os.IBinder
 import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -10,16 +10,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.zakariya.mymusicplayer.R
-import com.zakariya.mymusicplayer.util.Constants.POSITION_KEY
+import com.zakariya.mymusicplayer.services.PlayerService
 import com.zakariya.mymusicplayer.util.Constants.PREF_NAME
+import com.zakariya.mymusicplayer.util.MusicPlayerRemote
 import kotlinx.android.synthetic.main.activity_main.*
-
 
 open class MainActivity : AppCompatActivity() {
 
-    private var songPosition: Int = -1
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<FrameLayout>
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var playerServiceIntent: Intent
+
     private val panelState: Int
         get() = bottomSheetBehavior.state
 
@@ -41,10 +42,20 @@ open class MainActivity : AppCompatActivity() {
             dimBackground.alpha = slideOffset
         }
     }
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(p0: ComponentName?, service: IBinder?) {
+            val binder = service as PlayerService.LocalBinder
+            MusicPlayerRemote.playerService = binder.getService()
+        }
+
+        override fun onServiceDisconnected(p0: ComponentName?) {
+            MusicPlayerRemote.playerService = null
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//
+
 //        @TargetApi(29)
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 //            //make fullscreen, so we can draw behind status bar
@@ -61,11 +72,13 @@ open class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
+        playerServiceIntent = Intent(this, PlayerService::class.java)
+        bindService(playerServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+        startService(playerServiceIntent)
 
         setUpBottomNavigationNavController()
 
         sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        songPosition = sharedPreferences.getInt(POSITION_KEY, -1)
 
         bottomSheetBehavior = BottomSheetBehavior.from(slidingPanel)
         bottomSheetBehavior.addBottomSheetCallback(bottomSheetCallback)
@@ -78,7 +91,6 @@ open class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         bottomSheetBehavior.removeBottomSheetCallback(bottomSheetCallback)
-
     }
 
     override fun onBackPressed() {
@@ -116,5 +128,4 @@ open class MainActivity : AppCompatActivity() {
     private fun setUpBottomNavigationNavController() {
         bottomNavigationView.setupWithNavController(musicNavHostFragment.findNavController())
     }
-
 }
