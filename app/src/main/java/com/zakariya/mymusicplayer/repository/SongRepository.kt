@@ -35,6 +35,7 @@ class SongRepository(private val context: Context) {
     }
 
     @SuppressLint("Recycle")
+    @JvmOverloads
     private fun makeSongCursor(): Cursor? {
         val uri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         return try {
@@ -46,7 +47,7 @@ class SongRepository(private val context: Context) {
                 MediaStore.Audio.Media.DEFAULT_SORT_ORDER
             )
         } catch (e: SecurityException) {
-            return null
+            null
         }
     }
 }

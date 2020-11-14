@@ -1,16 +1,26 @@
 package com.zakariya.mymusicplayer.ui.activity
 
-import android.content.*
+import android.content.ComponentName
+import android.content.Context
+import android.content.ServiceConnection
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.IBinder
 import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.zakariya.mymusicplayer.PlayerHelper
 import com.zakariya.mymusicplayer.R
-import com.zakariya.mymusicplayer.services.PlayerService
+import com.zakariya.mymusicplayer.model.Song
+import com.zakariya.mymusicplayer.repository.SongRepository
+import com.zakariya.mymusicplayer.services.ACTION_MAIN
+import com.zakariya.mymusicplayer.ui.SongViewModel
+import com.zakariya.mymusicplayer.ui.SongViewModelFactory
+import com.zakariya.mymusicplayer.ui.fragment.PlayerFragment
 import com.zakariya.mymusicplayer.util.Constants.PREF_NAME
 import com.zakariya.mymusicplayer.util.MusicPlayerRemote
 import kotlinx.android.synthetic.main.activity_main.*
@@ -19,7 +29,8 @@ open class MainActivity : AppCompatActivity() {
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<FrameLayout>
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var playerServiceIntent: Intent
+
+    private val currentSong get() = PlayerHelper.getCurrentSong(sharedPreferences)
 
     private val panelState: Int
         get() = bottomSheetBehavior.state
@@ -42,16 +53,9 @@ open class MainActivity : AppCompatActivity() {
             dimBackground.alpha = slideOffset
         }
     }
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(p0: ComponentName?, service: IBinder?) {
-            val binder = service as PlayerService.LocalBinder
-            MusicPlayerRemote.playerService = binder.getService()
-        }
 
-        override fun onServiceDisconnected(p0: ComponentName?) {
-            MusicPlayerRemote.playerService = null
-        }
-    }
+    private var serviceToken: MusicPlayerRemote.ServiceToken? = null
+    private lateinit var viewModel: SongViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,17 +75,44 @@ open class MainActivity : AppCompatActivity() {
 //        }
 
         setContentView(R.layout.activity_main)
-
-        playerServiceIntent = Intent(this, PlayerService::class.java)
-        bindService(playerServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
-        startService(playerServiceIntent)
-
-        setUpBottomNavigationNavController()
+        val repository = SongRepository(this)
+        val viewModelFactory = SongViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(SongViewModel::class.java)
 
         sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 
+        serviceToken = MusicPlayerRemote.bindToService(this, object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName, service: IBinder) {
+                reloadPlayerFragment()
+                if (MusicPlayerRemote.playerService?.mediaPlayer == null && currentSong != null) {
+                    MusicPlayerRemote.playerService?.initMediaPlayer(currentSong!!.path)
+                    viewModel.songLiveData.observe(this@MainActivity, {
+                        if (it.isNotEmpty()) {
+                            MusicPlayerRemote.sendAllSong(it as MutableList<Song>, -1)
+
+                        } else {
+                            MusicPlayerRemote.sendAllSong(
+                                emptyList<Song>() as MutableList<Song>,
+                                -1
+                            )
+                        }
+                    })
+                }
+
+            }
+
+            override fun onServiceDisconnected(name: ComponentName) {
+            }
+        })
+
+        setUpBottomNavigationNavController()
+
         bottomSheetBehavior = BottomSheetBehavior.from(slidingPanel)
         bottomSheetBehavior.addBottomSheetCallback(bottomSheetCallback)
+
+        if (intent.action == ACTION_MAIN) {
+            expandPanel()
+        }
 
         miniPlayerFragment?.view?.setOnClickListener {
             expandPanel()
@@ -91,6 +122,7 @@ open class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         bottomSheetBehavior.removeBottomSheetCallback(bottomSheetCallback)
+        MusicPlayerRemote.unbindFromService(serviceToken)
     }
 
     override fun onBackPressed() {
@@ -105,14 +137,20 @@ open class MainActivity : AppCompatActivity() {
         return false
     }
 
-    fun collapsePanel() {
+    private fun collapsePanel() {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         setMiniPlayerAlpha(0f)
     }
 
-    fun expandPanel() {
+    private fun expandPanel() {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         setMiniPlayerAlpha(1f)
+    }
+
+    fun reloadPlayerFragment() {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.playerFragmentContainer, PlayerFragment())
+            .commit()
     }
 
     private fun setMiniPlayerAlpha(slideOffset: Float) {

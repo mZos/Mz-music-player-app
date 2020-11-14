@@ -6,8 +6,8 @@ object Constants {
 
     const val PREF_NAME = "com.zakariya.mymusicplayer.SHARED_PREF"
     const val POSITION_KEY = "position"
+    const val SAVE_CURRENT_SONG_KEY = "Save currently playing song"
     const val REQ_CODE = 0
-    const val RES_POS_KEY = "resumePosition"
     const val NOTIFICATION_CHANNEL_ID = "Music Player"
     const val NOTIFICATION_CHANNEL_NAME = "Music"
     const val NOTIFICATION_ID = 1

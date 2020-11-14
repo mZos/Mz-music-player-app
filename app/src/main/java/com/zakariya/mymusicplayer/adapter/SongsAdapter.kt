@@ -2,6 +2,7 @@ package com.zakariya.mymusicplayer.adapter
 
 import android.content.Context
 import android.media.MediaMetadataRetriever
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.zakariya.mymusicplayer.R
 import com.zakariya.mymusicplayer.model.Song
 import com.zakariya.mymusicplayer.ui.fragment.SongFragment
+import com.zakariya.mymusicplayer.util.MusicPlayerRemote
 import com.zakariya.mymusicplayer.util.OnSongClickListener
 import kotlinx.android.synthetic.main.single_song_item.view.*
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +21,7 @@ import kotlinx.coroutines.withContext
 
 class SongsAdapter(
     val context: Context,
-    private val songs: List<Song>,
+    var songList: MutableList<Song>,
     private val listener: OnSongClickListener
 ) : RecyclerView.Adapter<SongsAdapter.SongsViewHolder>() {
 
@@ -31,7 +33,7 @@ class SongsAdapter(
 
     override fun onBindViewHolder(holder: SongsViewHolder, position: Int) {
 
-        val songs = songs[position]
+        val songs = songList[position]
         holder.itemView.txtSongName.text = songs.name
         holder.itemView.txtArtistName.text = songs.artistName
 
@@ -45,18 +47,30 @@ class SongsAdapter(
 
         holder.itemView.setOnClickListener {
             listener.onSongClickListener(position, songs.path)
+            MusicPlayerRemote.sendAllSong(songList, position)
         }
     }
 
     override fun getItemCount(): Int {
-        return songs.size
+        return songList.size
     }
 
     class SongsViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
-    private fun getSongThumbnail(songPath: String): ByteArray? {
+    fun updateSongList(songList: List<Song>) {
+        this.songList = ArrayList(songList)
+        notifyDataSetChanged()
+    }
+
+    private fun getSongThumbnail(songPath: String?): ByteArray? {
         val retriever = MediaMetadataRetriever()
-        retriever.setDataSource(songPath)
+        try {
+            if (songPath != null)
+                retriever.setDataSource(songPath)
+        } catch (e: Exception) {
+            Log.e("SongsAdapter", e.message.toString())
+        }
+
         val imgByte = retriever.embeddedPicture
         retriever.release()
         return imgByte

@@ -29,8 +29,12 @@ class SongViewModel(private val repository: SongRepository) : ViewModel() {
 
     fun forceReload() = viewModelScope.launch {
         val list = loadSongs.await()
-        if (songs.value!!.size != list.size) {
-            songs.value = list
+        try {
+            if (songs.value!!.size != list.size) {
+                songs.value = list
+            }
+        } catch (e: NullPointerException) {
+            e.printStackTrace()
         }
     }
 }

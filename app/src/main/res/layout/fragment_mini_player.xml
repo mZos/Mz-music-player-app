@@ -58,7 +58,6 @@
                 app:indicatorColor="@color/colorAccent"
                 android:progressBackgroundTint="@color/colorPrimaryDark"
                 app:indicatorType="circular"
-                app:indicatorWidth="2dp"
                 app:linearSeamless="true"
                 tools:progress="10" />
 

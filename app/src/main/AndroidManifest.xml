@@ -23,10 +23,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.PlayerActivity" />
         <activity android:name=".ui.activity.MainActivity" />
 
-        <service android:name=".services.PlayerService" />
+        <service
+            android:name=".services.PlayerService"
+            android:enabled="true" />
+        <receiver
+            android:name=".NotificationActionBroadcastReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="action previous" />
+                <action android:name="action play pause" />
+                <action android:name="action next" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

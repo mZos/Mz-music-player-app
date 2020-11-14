@@ -49,17 +49,24 @@
                 android:marqueeRepeatLimit="marquee_forever"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:textStyle="bold"
                 android:textColor="@android:color/white"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/txtArtistName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:textColor="@color/grey"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="15dp"
+                android:ellipsize="marquee"
+                android:freezesText="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:textColor="@color/grey"
                 android:textSize="16sp" />
         </LinearLayout>
         <!-- seek bar and duration -->
@@ -74,8 +81,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:textColor="@color/holoWhite"
-                android:layout_marginStart="25dp" />
+                android:layout_marginStart="25dp"
+                android:textColor="@color/holoWhite" />
 
             <SeekBar
                 android:id="@+id/seekBar"
@@ -83,17 +90,17 @@
                 android:layout_height="wrap_content"
                 android:layout_toStartOf="@+id/txtEndDuration"
                 android:layout_toEndOf="@+id/txtStartDuration"
-                android:progressTint="@color/colorAccent"
                 android:progressBackgroundTint="@color/colorAccent"
+                android:progressTint="@color/colorAccent"
                 android:thumbTint="@color/colorAccent" />
 
             <TextView
                 android:id="@+id/txtEndDuration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/holoWhite"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="25dp" />
+                android:layout_marginEnd="25dp"
+                android:textColor="@color/holoWhite" />
 
         </RelativeLayout>
 

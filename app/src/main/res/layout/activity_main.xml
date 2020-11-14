@@ -9,7 +9,8 @@
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="104dp">
 
         <fragment
             android:id="@+id/musicNavHostFragment"
@@ -56,16 +57,16 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
+        style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
         android:layout_width="match_parent"
         android:layout_height="58dp"
         android:layout_gravity="bottom"
-        app:elevation="0dp"
-        style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
-        app:labelVisibilityMode="labeled"
         android:background="@color/colorPrimaryDark"
+        app:elevation="0dp"
+        app:itemIconTint="@color/bottom_nav_item_color"
         app:itemRippleColor="@color/colorAccent"
         app:itemTextColor="@color/bottom_nav_item_color"
-        app:itemIconTint="@color/bottom_nav_item_color"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_navigation_items"
         tools:layout_height="56dp" />
 
