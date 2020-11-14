@@ -17,7 +17,6 @@ import com.zakariya.mymusicplayer.PlayerHelper
 import com.zakariya.mymusicplayer.R
 import com.zakariya.mymusicplayer.model.Song
 import com.zakariya.mymusicplayer.repository.SongRepository
-import com.zakariya.mymusicplayer.services.ACTION_MAIN
 import com.zakariya.mymusicplayer.ui.SongViewModel
 import com.zakariya.mymusicplayer.ui.SongViewModelFactory
 import com.zakariya.mymusicplayer.ui.fragment.PlayerFragment
@@ -109,10 +108,6 @@ open class MainActivity : AppCompatActivity() {
 
         bottomSheetBehavior = BottomSheetBehavior.from(slidingPanel)
         bottomSheetBehavior.addBottomSheetCallback(bottomSheetCallback)
-
-        if (intent.action == ACTION_MAIN) {
-            expandPanel()
-        }
 
         miniPlayerFragment?.view?.setOnClickListener {
             expandPanel()
