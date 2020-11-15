@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -29,7 +28,6 @@ class SplashActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, permissions, REQ_CODE)
         } else {
             lifecycleScope.launch(Dispatchers.Main) {
-                Log.i("Splash", "llll")
                 delay(100L)
                 Intent(this@SplashActivity, MainActivity::class.java).also {
                     startActivity(it)
