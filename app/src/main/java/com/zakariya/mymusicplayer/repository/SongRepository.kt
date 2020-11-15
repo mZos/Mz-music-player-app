@@ -10,7 +10,6 @@ import com.zakariya.mymusicplayer.util.Constants.baseProjection
 
 class SongRepository(private val context: Context) {
 
-
     fun getAllSongs(): List<Song> {
         return songs(makeSongCursor())
     }
@@ -31,11 +30,11 @@ class SongRepository(private val context: Context) {
         val id = cursor.getString(1)
         val path = cursor.getString(2)
         val artistName = cursor.getString(3)
-        return Song(id, title, path, artistName)
+        val albumName = cursor.getString(4)
+        return Song(id, title, path, artistName, albumName)
     }
 
     @SuppressLint("Recycle")
-    @JvmOverloads
     private fun makeSongCursor(): Cursor? {
         val uri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         return try {
