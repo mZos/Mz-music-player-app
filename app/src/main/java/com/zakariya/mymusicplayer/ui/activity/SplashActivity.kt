@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 
 class SplashActivity : AppCompatActivity() {
 
-
     private val permissions = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE
     )
@@ -84,5 +83,10 @@ class SplashActivity : AppCompatActivity() {
             }
         }
         return hasAllPermissions
+    }
+
+    override fun onPause() {
+        super.onPause()
+        finish()
     }
 }
