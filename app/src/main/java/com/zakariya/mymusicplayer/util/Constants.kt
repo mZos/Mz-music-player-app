@@ -17,7 +17,8 @@ object Constants {
         MediaStore.Audio.AudioColumns.TITLE,
         MediaStore.Audio.AudioColumns._ID,
         MediaStore.Audio.AudioColumns.DATA,
-        MediaStore.Audio.ArtistColumns.ARTIST
+        MediaStore.Audio.ArtistColumns.ARTIST,
+        MediaStore.Audio.AlbumColumns.ALBUM
     )
 }
 
