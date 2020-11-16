@@ -1,9 +1,13 @@
 package com.zakariya.mymusicplayer.ui.activity
 
+import android.annotation.TargetApi
 import android.content.ComponentName
 import android.content.Context
 import android.content.ServiceConnection
 import android.content.SharedPreferences
+import android.content.res.Resources
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.view.View
@@ -23,6 +27,7 @@ import com.zakariya.mymusicplayer.ui.fragment.PlayerFragment
 import com.zakariya.mymusicplayer.util.Constants.PREF_NAME
 import com.zakariya.mymusicplayer.util.MusicPlayerRemote
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 open class MainActivity : AppCompatActivity() {
 
@@ -59,21 +64,21 @@ open class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        @TargetApi(29)
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            //make fullscreen, so we can draw behind status bar
-//            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-//                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//
-//            //make status bar color transparent
-//            window.statusBarColor = Color.TRANSPARENT
-//            var flags = window.decorView.systemUiVisibility
-////            // make dark status bar icons
-////            flags = flags xor View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-////            window.decorView.systemUiVisibility = flags
-//        }
+        @TargetApi(29)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            //make fullscreen, so we can draw behind status bar
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+
+            //make status bar color transparent
+            window.statusBarColor = Color.TRANSPARENT
+        }
 
         setContentView(R.layout.activity_main)
+
+        //setting up custom status bar height
+        statusBar.layoutParams.height = getStatusBarHeight(resources)
+
         val repository = SongRepository(this)
         val viewModelFactory = SongViewModelFactory(repository)
         viewModel = ViewModelProvider(this, viewModelFactory).get(SongViewModel::class.java)
@@ -117,7 +122,7 @@ open class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         bottomSheetBehavior.removeBottomSheetCallback(bottomSheetCallback)
-        MusicPlayerRemote.unbindFromService(serviceToken)
+        //MusicPlayerRemote.unbindFromService(serviceToken)
     }
 
     override fun onBackPressed() {
@@ -147,6 +152,16 @@ open class MainActivity : AppCompatActivity() {
             .replace(R.id.playerFragmentContainer, PlayerFragment())
             .commit()
     }
+
+    private fun getStatusBarHeight(r: Resources): Int {
+        var result = 0
+        val resourceId: Int = r.getIdentifier("status_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            result = r.getDimensionPixelSize(resourceId)
+        }
+        return result
+    }
+
 
     private fun setMiniPlayerAlpha(slideOffset: Float) {
         val alpha = 1 - slideOffset

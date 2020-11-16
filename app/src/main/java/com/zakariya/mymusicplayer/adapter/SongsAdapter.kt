@@ -2,6 +2,7 @@ package com.zakariya.mymusicplayer.adapter
 
 import android.content.Context
 import android.media.MediaMetadataRetriever
+import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,12 +19,13 @@ import kotlinx.android.synthetic.main.single_song_item.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.zhanghai.android.fastscroll.PopupTextProvider
 
 class SongsAdapter(
     val context: Context,
     var songList: MutableList<Song>,
     private val listener: OnSongClickListener
-) : RecyclerView.Adapter<SongsAdapter.SongsViewHolder>() {
+) : RecyclerView.Adapter<SongsAdapter.SongsViewHolder>(), PopupTextProvider {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongsViewHolder {
         return SongsViewHolder(
@@ -55,6 +57,11 @@ class SongsAdapter(
         return songList.size
     }
 
+    override fun getPopupText(position: Int): String {
+        val songName = songList[position].name
+        return getSectionName(songName)
+    }
+
     class SongsViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     fun updateSongList(songList: List<Song>) {
@@ -74,5 +81,25 @@ class SongsAdapter(
         val imgByte = retriever.embeddedPicture
         retriever.release()
         return imgByte
+    }
+
+    private fun getSectionName(musicMediaTitle: String?): String {
+        var musicMediaTitle = musicMediaTitle
+        return try {
+            if (TextUtils.isEmpty(musicMediaTitle)) {
+                return ""
+            }
+            musicMediaTitle = musicMediaTitle!!.trim { it <= ' ' }.toLowerCase()
+            if (musicMediaTitle.startsWith("the ")) {
+                musicMediaTitle = musicMediaTitle.substring(4)
+            } else if (musicMediaTitle.startsWith("a ")) {
+                musicMediaTitle = musicMediaTitle.substring(2)
+            }
+            if (musicMediaTitle.isEmpty()) {
+                ""
+            } else musicMediaTitle.substring(0, 1).toUpperCase()
+        } catch (e: Exception) {
+            ""
+        }
     }
 }

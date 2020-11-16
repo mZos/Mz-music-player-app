@@ -28,4 +28,8 @@ object SharedPreferenceUtil {
             return fromJson(songJson, type)
         }
     }
+
+    fun getPosition(sharedPreferences: SharedPreferences): Int {
+        return sharedPreferences.getInt(Constants.POSITION_KEY, -1)
+    }
 }

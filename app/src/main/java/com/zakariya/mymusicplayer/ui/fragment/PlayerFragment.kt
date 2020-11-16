@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.SeekBar
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -21,6 +22,7 @@ import com.zakariya.mymusicplayer.ui.SongViewModel
 import com.zakariya.mymusicplayer.ui.SongViewModelFactory
 import com.zakariya.mymusicplayer.util.Constants.PREF_NAME
 import com.zakariya.mymusicplayer.util.MusicPlayerRemote
+import com.zakariya.mymusicplayer.util.PlayPauseStateNotifier
 import com.zakariya.mymusicplayer.util.PlayerBtnAction
 import com.zakariya.mymusicplayer.util.SongChangeNotifier
 import kotlinx.android.synthetic.main.fragment_player.*
@@ -29,26 +31,24 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener, PlayerBtnAction,
-    SongChangeNotifier {
+    SongChangeNotifier, PlayPauseStateNotifier {
 
     private val TAG = "My" + this::class.java.simpleName
 
     private val playerService: PlayerService?
         get() = MusicPlayerRemote.playerService
-
     private val currentSong: Song?
         get() = PlayerHelper.getCurrentSong(sharedPreferences)
+
     private lateinit var viewModel: SongViewModel
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        iLog(playerService.toString() + "hello")
-
         if (MusicPlayerRemote.playerService != null) {
-            iLog("Callback set successful")
             MusicPlayerRemote.playerService?.setSongChangeCallback(this)
+            MusicPlayerRemote.playerService?.setPlayPauseStateCallback(this)
         }
 
         val repository = SongRepository(requireContext())
@@ -86,11 +86,56 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
         })
     }
 
+    override fun onClick(view: View) {
+        when (view.id) {
+            R.id.fabPlayPause -> {
+                MusicPlayerRemote.playPause()
+                setUpSeekBar()
+                setUpPlayPauseButton()
+            }
+            R.id.btnNext -> {
+                MusicPlayerRemote.playNextSong()
+            }
+            R.id.btnPrevious -> {
+                MusicPlayerRemote.playPreviousSong()
+            }
+            R.id.btnShuffle -> {
+                Toast.makeText(requireContext(), "Coming Soon", Toast.LENGTH_SHORT).show()
+            }
+            R.id.btnPlayList -> {
+                Toast.makeText(requireContext(), "Coming Soon", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     override fun onCurrentSongChange() {
-        updateUi()
-        setUpPlayPauseButton()
+        if (activity != null) {
+            updateUi()
+            setUpPlayPauseButton()
+        }
         MusicPlayerRemote.playerService?.restartNotification()
     }
+
+    override fun onPlayPauseStateChange() {
+        if (activity != null) {
+            setUpPlayPauseButton()
+        }
+        MusicPlayerRemote.playerService?.restartNotification()
+    }
+
+    override fun playPauseMusic() {
+
+    }
+
+    //onPlayNextSong
+    override fun playNextSong() {
+    }
+
+    //onPlayPreviousSong
+    override fun playPreviousSong() {
+    }
+
+    private fun iLog(message: String) = Log.i(TAG, message)
 
     @SuppressLint("SetTextI18n")
     private fun updateUi() {
@@ -100,9 +145,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
                 .into(imgThumbnail)
         }
 
-        iLog("Restarted")
         txtEndDuration.text = millisToString(MusicPlayerRemote.songDurationMillis)
-
         setUpSeekBar()
 
         if (currentSong != null) {
@@ -113,48 +156,18 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
         txtStartDuration.text = "00:00"
     }
 
-    override fun onClick(view: View) {
-        when (view.id) {
-            R.id.fabPlayPause -> {
-                MusicPlayerRemote.playPause()
-                setUpSeekBar()
-                setUpPlayPauseButton()
-            }
-            R.id.btnNext -> {
-                playerService?.playNext()
-            }
-            R.id.btnPrevious -> {
-                playerService?.playPrevious()
-            }
-            R.id.btnShuffle -> {
-
-            }
-            R.id.btnPlayList -> {
-
-            }
-        }
-    }
-
-    override fun playPauseMusic() {
-
-    }
-
-    override fun playNextSong() {
-    }
-
-    override fun playPreviousSong() {
-    }
-
-    private fun iLog(message: String) = Log.i(TAG, message)
-
     private fun setUpSeekBar() = lifecycleScope.launch(Dispatchers.Main) {
         seekBar.max = MusicPlayerRemote.songDurationMillis
         if (playerService?.mediaPlayer != null) {
-            while (playerService?.mediaPlayer!!.isPlaying) {
-                txtStartDuration.text =
-                    millisToString(playerService?.mediaPlayer?.currentPosition!!)
-                seekBar.progress = playerService?.mediaPlayer?.currentPosition!!
-                delay(100)
+            try {
+                while (playerService?.mediaPlayer!!.isPlaying) {
+                    txtStartDuration.text =
+                        millisToString(playerService?.mediaPlayer?.currentPosition!!)
+                    seekBar.progress = playerService?.mediaPlayer?.currentPosition!!
+                    delay(100)
+                }
+            } catch (e: NullPointerException) {
+                e.printStackTrace()
             }
         }
     }

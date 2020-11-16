@@ -22,6 +22,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 dependencies {
@@ -56,4 +65,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
 
     implementation "com.android.support:support-compat:28.0.0"
+
+    //fastScroll for scrollbar in recyclerView
+    implementation 'me.zhanghai.android.fastscroll:library:1.1.5'
 }
