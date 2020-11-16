@@ -23,15 +23,14 @@ import com.zakariya.mymusicplayer.ui.SongViewModelFactory
 import com.zakariya.mymusicplayer.util.Constants.PREF_NAME
 import com.zakariya.mymusicplayer.util.MusicPlayerRemote
 import com.zakariya.mymusicplayer.util.PlayPauseStateNotifier
-import com.zakariya.mymusicplayer.util.PlayerBtnAction
 import com.zakariya.mymusicplayer.util.SongChangeNotifier
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener, PlayerBtnAction,
-    SongChangeNotifier, PlayPauseStateNotifier {
+class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener, SongChangeNotifier,
+    PlayPauseStateNotifier {
 
     private val TAG = "My" + this::class.java.simpleName
 
@@ -121,18 +120,6 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
             setUpPlayPauseButton()
         }
         MusicPlayerRemote.playerService?.restartNotification()
-    }
-
-    override fun playPauseMusic() {
-
-    }
-
-    //onPlayNextSong
-    override fun playNextSong() {
-    }
-
-    //onPlayPreviousSong
-    override fun playPreviousSong() {
     }
 
     private fun iLog(message: String) = Log.i(TAG, message)
