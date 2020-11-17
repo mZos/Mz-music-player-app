@@ -40,10 +40,30 @@ object MusicPlayerRemote {
         }
     }
 
+    fun seekTo(currentPosition: Int) {
+        playerService?.let {
+            playerService?.seekTo(currentPosition)
+        }
+    }
+
+    fun isPlaying(): Boolean {
+        playerService?.let {
+            return it.isPlaying()
+        }
+        return false
+    }
+
     val songDurationMillis: Int
         get() = if (playerService != null) {
             playerService!!.getSongDurationMillis()
         } else -1
+
+    val currentSongPositionMillis: Int
+        get() = if (playerService != null) {
+            playerService!!.getCurrentPosition()
+        } else {
+            0
+        }
 
     fun bindToService(context: Context, callback: ServiceConnection): ServiceToken? {
 

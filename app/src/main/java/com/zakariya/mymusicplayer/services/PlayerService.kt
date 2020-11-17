@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package com.zakariya.mymusicplayer.services
 
 import android.app.NotificationChannel
@@ -20,7 +18,9 @@ import android.os.Build
 import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
 import android.text.Html
+import android.text.Spanned
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.media.app.NotificationCompat
 import com.zakariya.mymusicplayer.NotificationActionBroadcastReceiver
@@ -39,13 +39,13 @@ import com.zakariya.mymusicplayer.util.SharedPreferenceUtil
 import com.zakariya.mymusicplayer.util.SongChangeNotifier
 import java.io.IOException
 
-@Suppress("DEPRECATION")
-
+//Actions for notification action buttons
 const val ACTION_PREVIOUS = "action previous"
 const val ACTION_PLAY_PAUSE = "action play pause"
 const val ACTION_NEXT = "action next"
 const val ACTION_MAIN = "action main"
 
+@Suppress("DEPRECATION")
 class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener,
     MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnErrorListener,
     AudioManager.OnAudioFocusChangeListener {
@@ -58,7 +58,7 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var mediaSessionCompat: MediaSessionCompat
 
-    lateinit var focusRequest: AudioFocusRequest
+    private lateinit var focusRequest: AudioFocusRequest
 
     private var focus: Int? = null
     private var position = -1
@@ -67,14 +67,10 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
 
     var mediaPlayer: MediaPlayer? = null
     var currentSong: Song? = null
-    var listOfAllSong: List<Song> = ArrayList()
-    var isPlaying = false
+    private var listOfAllSong: List<Song> = ArrayList()
 
-    val songFromSharedPreferences: Song?
+    private val songFromSharedPreferences: Song?
         get() = SharedPreferenceUtil.getCurrentSong(sharedPreferences)
-
-    val savedPosition: Int
-        get() = SharedPreferenceUtil.getPosition(sharedPreferences)
 
     private fun iLog(m: String) = Log.i(TAG, m)
 
@@ -107,6 +103,7 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
 
     override fun onError(p0: MediaPlayer?, p1: Int, p2: Int): Boolean {
         mediaPlayer?.stop()
+        Toast.makeText(this, "Invalid format or song", Toast.LENGTH_SHORT).show()
         with(sharedPreferences.edit()) {
             putInt(POSITION_KEY, position)
             apply()
@@ -122,19 +119,17 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
     override fun onAudioFocusChange(focusState: Int) {
         when (focusState) {
             AudioManager.AUDIOFOCUS_GAIN -> {
-                iLog("Gained")
-                if (mediaPlayer == null) initMediaPlayer(songFromSharedPreferences!!.path)
-                else if (!mediaPlayer!!.isPlaying) {
-                    mediaPlayer?.start()
-                    startForegroundService()
-                    notifyPlayPauseStateChanged()
+                if (mediaPlayer == null) {
+                    initMediaPlayer(songFromSharedPreferences!!.path)
+                } else if (!isPlaying()) {
+                    play()
                 }
                 mediaPlayer?.setVolume(1.0f, 1.0f)
             }
 
             AudioManager.AUDIOFOCUS_LOSS -> {
-                iLog("Loss....")
-                if (mediaPlayer != null && mediaPlayer!!.isPlaying) {
+                if (mediaPlayer != null && isPlaying()) {
+                    saveCurrentPosition()
                     mediaPlayer?.stop()
                     notifyPlayPauseStateChanged()
                     stopForeground(false)
@@ -144,26 +139,18 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
             }
 
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
-
-                iLog("loss transient")
-                if (mediaPlayer!!.isPlaying) {
-                    mediaPlayer?.pause()
-                    stopForeground(false)
-                    notifyPlayPauseStateChanged()
+                if (isPlaying()) {
+                    pause(false)
                 }
             }
 
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-                iLog("CAn duck")
-                if (mediaPlayer!!.isPlaying) mediaPlayer?.setVolume(0.1f, 0.1f)
+                if (isPlaying()) mediaPlayer?.setVolume(0.1f, 0.1f)
             }
 
             AudioManager.AUDIOFOCUS_REQUEST_DELAYED -> {
-                iLog("lost delayed")
-                if (mediaPlayer!!.isPlaying) {
-                    mediaPlayer?.pause()
-                    stopForeground(false)
-                    notifyPlayPauseStateChanged()
+                if (isPlaying()) {
+                    pause(false)
                 }
             }
         }
@@ -171,14 +158,13 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
 
     override fun onDestroy() {
         super.onDestroy()
-        iLog("onDestroy")
         stopForeground(true)
         if (mediaPlayer != null) {
             with(sharedPreferences.edit()) {
                 putInt(POSITION_KEY, position)
-                putInt(CURRENT_SONG_DURATION_KEY, mediaPlayer!!.currentPosition)
                 apply()
             }
+            saveCurrentPosition()
             mediaPlayer?.stop()
             notifyPlayPauseStateChanged()
             mediaPlayer?.release()
@@ -239,7 +225,6 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
             originalSongList = ArrayList(songList)
             this.listOfAllSong = ArrayList(originalSongList)
             initMediaPlayer(position)
-            startForegroundService()
         } else if (!songList.isNullOrEmpty()) {
             originalSongList = ArrayList(songList)
             this.listOfAllSong = ArrayList(originalSongList)
@@ -267,8 +252,6 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
             e.printStackTrace()
         }
         play()
-        notifyPlayPauseStateChanged()
-        isPlaying = true
     }
 
     //Only initialize
@@ -284,7 +267,9 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
         } catch (e: IOException) {
             e.printStackTrace()
         }
-
+        val currentPosition = getSavedCurrentPosition()
+        if (currentPosition != -1)
+            seekTo(currentPosition)
     }
 
     fun getSongDurationMillis(): Int {
@@ -294,59 +279,65 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
         return -1
     }
 
-    fun play() {
-        if (!requestAudioFocus()) stopSelf()
-        mediaPlayer?.start()
+    private fun play() {
+        mediaPlayer?.let {
+            if (!requestAudioFocus()) stopSelf()
+            it.start()
+            notifyPlayPauseStateChanged()
+            startForegroundService()
+        }
     }
 
-    fun playPauseMusic() {
+    private fun pause(removeNotification: Boolean) {
+        mediaPlayer?.pause()
+        notifyPlayPauseStateChanged()
+        stopForeground(removeNotification)
+        saveCurrentPosition()
+    }
+
+    fun seekTo(seekPosition: Int) {
+        mediaPlayer?.seekTo(seekPosition)
+    }
+
+    private fun playPauseMusic() {
         if (mediaPlayer != null) {
-            if (mediaPlayer!!.isPlaying) {
-                mediaPlayer?.pause()
-                notifyPlayPauseStateChanged()
+            if (isPlaying()) {
+                pause(false)
 
                 with(sharedPreferences.edit()) {
                     putInt(POSITION_KEY, position)
-                    putInt(CURRENT_SONG_DURATION_KEY, mediaPlayer!!.currentPosition)
                     apply()
                 }
 
                 if (requestAudioFocus())
                     removeAudioFocus()
-                stopForeground(false)
-                isPlaying = true
             } else {
                 play()
-                notifyPlayPauseStateChanged()
-                startForegroundService()
-                isPlaying = true
             }
         } else {
             initMediaPlayer(position)
-            startForegroundService()
-            isPlaying = true
         }
     }
 
-    fun playNextSong() {
+    private fun playNextSong() {
         initMediaPlayer(getNextPosition())
         notifyCurrentSongChanged()
     }
 
-    fun playPreviousSong() {
+    private fun playPreviousSong() {
         initMediaPlayer(getPreviousPosition())
         notifyCurrentSongChanged()
     }
 
-    fun notifyCurrentSongChanged() {
+    private fun notifyCurrentSongChanged() {
         currentSongChangeNotifier.onCurrentSongChange()
     }
 
-    fun notifyPlayPauseStateChanged() {
+    private fun notifyPlayPauseStateChanged() {
         playPauseStateNotifier.onPlayPauseStateChange()
     }
 
-    fun getNextPosition(): Int {
+    private fun getNextPosition(): Int {
         var nextPosition = position + 1
         if (position == -1) {
             nextPosition = sharedPreferences.getInt(POSITION_KEY, 0) + 1
@@ -360,7 +351,7 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
         return nextPosition
     }
 
-    fun getPreviousPosition(): Int {
+    private fun getPreviousPosition(): Int {
         var prePosition = position - 1
         if (position == -1) {
             prePosition = sharedPreferences.getInt(POSITION_KEY, 0) - 1
@@ -377,6 +368,24 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
         return prePosition
     }
 
+    private fun saveCurrentPosition() {
+        with(sharedPreferences.edit()) {
+            getCurrentPosition()?.let { putInt(CURRENT_SONG_DURATION_KEY, it) }
+            apply()
+        }
+    }
+
+    private fun getSavedCurrentPosition(): Int {
+        return sharedPreferences.getInt(CURRENT_SONG_DURATION_KEY, -1)
+    }
+
+    fun getCurrentPosition(): Int {
+        mediaPlayer?.let {
+            return it.currentPosition
+        }
+        return 0
+    }
+
     fun setSongChangeCallback(callback: SongChangeNotifier) {
         this.currentSongChangeNotifier = callback
     }
@@ -389,12 +398,28 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
         startForegroundService()
     }
 
-    @JvmName("isPlaying1")
     fun isPlaying(): Boolean {
-        if (mediaPlayer != null) {
-            return mediaPlayer!!.isPlaying
+        mediaPlayer?.let {
+            return it.isPlaying
         }
         return false
+    }
+
+    private fun getTitle(): Spanned? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Html.fromHtml("<b>" + currentSong!!.name + "</b>", Html.FROM_HTML_MODE_LEGACY)
+        } else {
+            Html.fromHtml("<b>" + currentSong!!.name + "</b>")
+        }
+    }
+
+    private fun getSubText(): Spanned? {
+        val subText = if (currentSong?.albumName != null) currentSong?.albumName else ""
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Html.fromHtml("<b>$subText</b>", Html.FROM_HTML_MODE_LEGACY)
+        } else {
+            Html.fromHtml("<b>$subText</b>")
+        }
     }
 
     private fun startForegroundService() {
@@ -437,13 +462,11 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
 
         var playPauseDrawable = R.drawable.ic_pause_bigger
         if (mediaPlayer != null)
-            playPauseDrawable = if (mediaPlayer!!.isPlaying) {
+            playPauseDrawable = if (isPlaying()) {
                 R.drawable.ic_pause_bigger
             } else {
                 R.drawable.ic_play_bigger
             }
-
-        val subText = if (currentSong?.albumName != null) currentSong?.albumName else ""
 
         val builder = androidx.core.app.NotificationCompat
             .Builder(this, NOTIFICATION_CHANNEL_ID).setOngoing(true).apply {
@@ -451,9 +474,9 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
                 priority = androidx.core.app.NotificationCompat.PRIORITY_MAX
                 setCategory(androidx.core.app.NotificationCompat.CATEGORY_SERVICE)
                 setVisibility(androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC)
-                setContentTitle(Html.fromHtml("<b>" + currentSong!!.name + "</b>"))
+                setContentTitle(getTitle())
                 setContentText(currentSong!!.artistName)
-                setSubText(Html.fromHtml("<b>$subText</b>"))
+                setSubText(getSubText())
                 setOngoing(isPlaying())
                 addAction(R.drawable.ic_previous, "Previous", previousPendingIntent)
                 addAction(playPauseDrawable, "Play", playPausePendingIntent)

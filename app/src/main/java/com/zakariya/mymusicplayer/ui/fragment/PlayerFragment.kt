@@ -1,6 +1,5 @@
 package com.zakariya.mymusicplayer.ui.fragment
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -140,7 +139,6 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
 
     private fun iLog(message: String) = Log.i(TAG, message)
 
-    @SuppressLint("SetTextI18n")
     private fun updateUi() {
         if (currentSong != null) {
             val imgByte = getSongThumbnail(currentSong!!.path)
