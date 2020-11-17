@@ -12,7 +12,6 @@ import com.zakariya.mymusicplayer.adapter.SongsAdapter
 import com.zakariya.mymusicplayer.repository.SongRepository
 import com.zakariya.mymusicplayer.ui.SongViewModel
 import com.zakariya.mymusicplayer.ui.SongViewModelFactory
-import com.zakariya.mymusicplayer.util.OnSongClickListener
 import com.zakariya.mymusicplayer.views.ScrollingViewOnApplyWindowInsetsListener
 import kotlinx.android.synthetic.main.fragment_song.*
 import me.zhanghai.android.fastscroll.FastScroller
@@ -60,12 +59,7 @@ class SongFragment : Fragment(R.layout.fragment_song) {
     }
 
     private fun initAdapter() {
-        val listener = object : OnSongClickListener {
-            override fun onSongClickListener(position: Int, songPath: String) {
-                restartPlayerFragment()
-            }
-        }
-        adapter = SongsAdapter(requireContext(), mutableListOf(), listener)
+        adapter = SongsAdapter(requireContext(), mutableListOf())
         rvSongs.adapter = adapter
     }
 
