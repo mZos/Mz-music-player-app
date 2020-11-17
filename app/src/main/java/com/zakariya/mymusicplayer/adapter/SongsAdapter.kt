@@ -14,17 +14,17 @@ import com.zakariya.mymusicplayer.R
 import com.zakariya.mymusicplayer.model.Song
 import com.zakariya.mymusicplayer.ui.fragment.SongFragment
 import com.zakariya.mymusicplayer.util.MusicPlayerRemote
-import com.zakariya.mymusicplayer.util.OnSongClickListener
 import kotlinx.android.synthetic.main.single_song_item.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.zhanghai.android.fastscroll.PopupTextProvider
+import java.util.*
+import kotlin.collections.ArrayList
 
 class SongsAdapter(
     val context: Context,
-    var songList: MutableList<Song>,
-    private val listener: OnSongClickListener
+    private var songList: MutableList<Song>
 ) : RecyclerView.Adapter<SongsAdapter.SongsViewHolder>(), PopupTextProvider {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongsViewHolder {
@@ -48,7 +48,6 @@ class SongsAdapter(
         }
 
         holder.itemView.setOnClickListener {
-            listener.onSongClickListener(position, songs.path)
             MusicPlayerRemote.sendAllSong(songList, position)
         }
     }
@@ -84,20 +83,20 @@ class SongsAdapter(
     }
 
     private fun getSectionName(musicMediaTitle: String?): String {
-        var musicMediaTitle = musicMediaTitle
+        var songName = musicMediaTitle
         return try {
-            if (TextUtils.isEmpty(musicMediaTitle)) {
+            if (TextUtils.isEmpty(songName)) {
                 return ""
             }
-            musicMediaTitle = musicMediaTitle!!.trim { it <= ' ' }.toLowerCase()
-            if (musicMediaTitle.startsWith("the ")) {
-                musicMediaTitle = musicMediaTitle.substring(4)
-            } else if (musicMediaTitle.startsWith("a ")) {
-                musicMediaTitle = musicMediaTitle.substring(2)
+            songName = songName!!.trim { it <= ' ' }.toLowerCase(Locale.ROOT)
+            if (songName.startsWith("the ")) {
+                songName = songName.substring(4)
+            } else if (songName.startsWith("a ")) {
+                songName = songName.substring(2)
             }
-            if (musicMediaTitle.isEmpty()) {
+            if (songName.isEmpty()) {
                 ""
-            } else musicMediaTitle.substring(0, 1).toUpperCase()
+            } else songName.substring(0, 1).toUpperCase(Locale.ROOT)
         } catch (e: Exception) {
             ""
         }
