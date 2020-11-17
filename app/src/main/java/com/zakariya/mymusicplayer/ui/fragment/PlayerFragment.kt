@@ -19,7 +19,6 @@ import com.zakariya.mymusicplayer.repository.SongRepository
 import com.zakariya.mymusicplayer.services.PlayerService
 import com.zakariya.mymusicplayer.ui.SongViewModel
 import com.zakariya.mymusicplayer.ui.SongViewModelFactory
-import com.zakariya.mymusicplayer.util.Constants.CURRENT_SONG_DURATION_KEY
 import com.zakariya.mymusicplayer.util.Constants.PREF_NAME
 import com.zakariya.mymusicplayer.util.MusicPlayerRemote
 import com.zakariya.mymusicplayer.util.PlayPauseStateNotifier
@@ -61,7 +60,6 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
         super.onViewCreated(view, savedInstanceState)
         txtSongTitle.isSelected = true
         txtArtistName.isSelected = true
-
         updateUi()
 
         fabPlayPause.setOnClickListener(this)
@@ -84,13 +82,6 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
             override fun onStopTrackingTouch(p0: SeekBar?) = Unit
         })
 
-        val seekPosition = sharedPreferences.getInt(CURRENT_SONG_DURATION_KEY, -1)
-        if (seekPosition != -1) {
-            seekBar.progress = seekPosition
-            txtStartDuration.text = millisToString(seekPosition)
-        } else {
-            MusicPlayerRemote.seekTo(0)
-        }
     }
 
     override fun onResume() {
@@ -146,7 +137,6 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
                 .into(imgThumbnail)
         }
 
-        txtEndDuration.text = millisToString(MusicPlayerRemote.songDurationMillis)
         setUpSeekBar()
 
         if (currentSong != null) {
@@ -157,14 +147,16 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
     }
 
     private fun setUpSeekBar() = lifecycleScope.launch(Dispatchers.Main) {
+        txtEndDuration.text = millisToString(MusicPlayerRemote.songDurationMillis)
         txtStartDuration.text = millisToString(MusicPlayerRemote.currentSongPositionMillis)
         seekBar.max = MusicPlayerRemote.songDurationMillis
         if (playerService?.mediaPlayer != null) {
             try {
+                seekBar.progress = MusicPlayerRemote.currentSongPositionMillis
                 while (playerService?.mediaPlayer!!.isPlaying) {
                     txtStartDuration.text =
-                        millisToString(playerService?.mediaPlayer?.currentPosition!!)
-                    seekBar.progress = playerService?.mediaPlayer?.currentPosition!!
+                        millisToString(MusicPlayerRemote.currentSongPositionMillis)
+                    seekBar.progress = MusicPlayerRemote.currentSongPositionMillis
                     delay(100)
                 }
             } catch (e: NullPointerException) {
