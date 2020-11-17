@@ -20,6 +20,7 @@ import com.zakariya.mymusicplayer.repository.SongRepository
 import com.zakariya.mymusicplayer.services.PlayerService
 import com.zakariya.mymusicplayer.ui.SongViewModel
 import com.zakariya.mymusicplayer.ui.SongViewModelFactory
+import com.zakariya.mymusicplayer.util.Constants.CURRENT_SONG_DURATION_KEY
 import com.zakariya.mymusicplayer.util.Constants.PREF_NAME
 import com.zakariya.mymusicplayer.util.MusicPlayerRemote
 import com.zakariya.mymusicplayer.util.PlayPauseStateNotifier
@@ -34,13 +35,13 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
 
     private val TAG = "My" + this::class.java.simpleName
 
+    private lateinit var viewModel: SongViewModel
+    private lateinit var sharedPreferences: SharedPreferences
+
     private val playerService: PlayerService?
         get() = MusicPlayerRemote.playerService
     private val currentSong: Song?
         get() = PlayerHelper.getCurrentSong(sharedPreferences)
-
-    private lateinit var viewModel: SongViewModel
-    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +76,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
-                    playerService?.mediaPlayer?.seekTo(progress)
+                    MusicPlayerRemote.seekTo(progress)
                     txtStartDuration.text = millisToString(progress)
                 }
             }
@@ -83,14 +84,27 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
             override fun onStartTrackingTouch(p0: SeekBar?) = Unit
             override fun onStopTrackingTouch(p0: SeekBar?) = Unit
         })
+
+        val seekPosition = sharedPreferences.getInt(CURRENT_SONG_DURATION_KEY, -1)
+        if (seekPosition != -1) {
+            seekBar.progress = seekPosition
+            txtStartDuration.text = millisToString(seekPosition)
+        } else {
+            MusicPlayerRemote.seekTo(0)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (activity != null) {
+            updateUi()
+        }
     }
 
     override fun onClick(view: View) {
         when (view.id) {
             R.id.fabPlayPause -> {
                 MusicPlayerRemote.playPause()
-                setUpSeekBar()
-                setUpPlayPauseButton()
             }
             R.id.btnNext -> {
                 MusicPlayerRemote.playNextSong()
@@ -110,6 +124,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
     override fun onCurrentSongChange() {
         if (activity != null) {
             updateUi()
+            setUpSeekBar()
             setUpPlayPauseButton()
         }
         MusicPlayerRemote.playerService?.restartNotification()
@@ -117,6 +132,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
 
     override fun onPlayPauseStateChange() {
         if (activity != null) {
+            setUpSeekBar()
             setUpPlayPauseButton()
         }
         MusicPlayerRemote.playerService?.restartNotification()
@@ -140,10 +156,10 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
             setUpSeekBar()
             txtArtistName.text = currentSong!!.artistName
         }
-        txtStartDuration.text = "00:00"
     }
 
     private fun setUpSeekBar() = lifecycleScope.launch(Dispatchers.Main) {
+        txtStartDuration.text = millisToString(MusicPlayerRemote.currentSongPositionMillis)
         seekBar.max = MusicPlayerRemote.songDurationMillis
         if (playerService?.mediaPlayer != null) {
             try {
