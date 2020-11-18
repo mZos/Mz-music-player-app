@@ -31,7 +31,8 @@ class SongRepository(private val context: Context) {
         val path = cursor.getString(2)
         val artistName = cursor.getString(3)
         val albumName = cursor.getString(4)
-        return Song(id, title, path, artistName, albumName)
+        val duration = cursor.getLong(5)
+        return Song(id, title, path, artistName, albumName, duration)
     }
 
     @SuppressLint("Recycle")
