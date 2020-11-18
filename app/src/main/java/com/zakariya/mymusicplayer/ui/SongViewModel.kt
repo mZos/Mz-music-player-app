@@ -17,7 +17,7 @@ class SongViewModel(private val repository: SongRepository) : ViewModel() {
     val songLiveData: LiveData<List<Song>> = songs
 
     init {
-        viewModelScope.launch { loadLibraryContent() }
+        loadLibraryContent()
     }
 
     private fun loadLibraryContent() = viewModelScope.launch {
