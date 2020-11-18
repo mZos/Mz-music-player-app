@@ -17,7 +17,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.zakariya.mymusicplayer.PlayerHelper
 import com.zakariya.mymusicplayer.R
 import com.zakariya.mymusicplayer.model.Song
 import com.zakariya.mymusicplayer.repository.SongRepository
@@ -26,6 +25,7 @@ import com.zakariya.mymusicplayer.ui.SongViewModelFactory
 import com.zakariya.mymusicplayer.ui.fragment.PlayerFragment
 import com.zakariya.mymusicplayer.util.Constants.PREF_NAME
 import com.zakariya.mymusicplayer.util.MusicPlayerRemote
+import com.zakariya.mymusicplayer.util.PlayerHelper
 import kotlinx.android.synthetic.main.activity_main.*
 
 

@@ -1,4 +1,4 @@
-package com.zakariya.mymusicplayer
+package com.zakariya.mymusicplayer.receivers
 
 import android.content.BroadcastReceiver
 import android.content.Context

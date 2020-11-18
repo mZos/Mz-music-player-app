@@ -25,10 +25,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.media.app.NotificationCompat
-import com.zakariya.mymusicplayer.NotificationActionBroadcastReceiver
-import com.zakariya.mymusicplayer.PlayerHelper.getSongThumbnail
 import com.zakariya.mymusicplayer.R
 import com.zakariya.mymusicplayer.model.Song
+import com.zakariya.mymusicplayer.receivers.NotificationActionBroadcastReceiver
 import com.zakariya.mymusicplayer.ui.activity.MainActivity
 import com.zakariya.mymusicplayer.util.Constants.CURRENT_SONG_DURATION_KEY
 import com.zakariya.mymusicplayer.util.Constants.NOTIFICATION_CHANNEL_ID
@@ -37,6 +36,7 @@ import com.zakariya.mymusicplayer.util.Constants.NOTIFICATION_ID
 import com.zakariya.mymusicplayer.util.Constants.POSITION_KEY
 import com.zakariya.mymusicplayer.util.Constants.PREF_NAME
 import com.zakariya.mymusicplayer.util.PlayPauseStateNotifier
+import com.zakariya.mymusicplayer.util.PlayerHelper.getSongThumbnail
 import com.zakariya.mymusicplayer.util.SeekCompletionNotifier
 import com.zakariya.mymusicplayer.util.SharedPreferenceUtil
 import com.zakariya.mymusicplayer.util.SongChangeNotifier

@@ -29,7 +29,7 @@
             android:name=".services.PlayerService"
             android:enabled="true" />
         <receiver
-            android:name=".NotificationActionBroadcastReceiver"
+            android:name=".receivers.NotificationActionBroadcastReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="action previous" />

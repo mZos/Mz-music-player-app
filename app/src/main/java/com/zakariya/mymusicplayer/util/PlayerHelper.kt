@@ -1,10 +1,8 @@
-package com.zakariya.mymusicplayer
+package com.zakariya.mymusicplayer.util
 
 import android.content.SharedPreferences
 import android.media.MediaMetadataRetriever
 import com.zakariya.mymusicplayer.model.Song
-import com.zakariya.mymusicplayer.util.MusicPlayerRemote
-import com.zakariya.mymusicplayer.util.SharedPreferenceUtil
 
 
 object PlayerHelper {
