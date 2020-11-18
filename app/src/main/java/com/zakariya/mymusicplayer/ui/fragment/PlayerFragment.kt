@@ -22,6 +22,7 @@ import com.zakariya.mymusicplayer.ui.SongViewModelFactory
 import com.zakariya.mymusicplayer.util.Constants.PREF_NAME
 import com.zakariya.mymusicplayer.util.MusicPlayerRemote
 import com.zakariya.mymusicplayer.util.PlayPauseStateNotifier
+import com.zakariya.mymusicplayer.util.SeekCompletionNotifier
 import com.zakariya.mymusicplayer.util.SongChangeNotifier
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +30,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener, SongChangeNotifier,
-    PlayPauseStateNotifier {
+    PlayPauseStateNotifier, SeekCompletionNotifier {
 
     private val TAG = "My" + this::class.java.simpleName
 
@@ -47,6 +48,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
         if (MusicPlayerRemote.playerService != null) {
             MusicPlayerRemote.playerService?.setSongChangeCallback(this)
             MusicPlayerRemote.playerService?.setPlayPauseStateCallback(this)
+            MusicPlayerRemote.playerService?.setSeekCompleteNotifierCallback(this)
         }
 
         val repository = SongRepository(requireContext())
@@ -125,7 +127,12 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
             setUpSeekBar()
             setUpPlayPauseButton()
         }
+        MusicPlayerRemote.playerService?.setMediaSessionAction()
         MusicPlayerRemote.playerService?.restartNotification()
+    }
+
+    override fun onSeekComplete() {
+        setUpSeekBar()
     }
 
     private fun iLog(message: String) = Log.i(TAG, message)

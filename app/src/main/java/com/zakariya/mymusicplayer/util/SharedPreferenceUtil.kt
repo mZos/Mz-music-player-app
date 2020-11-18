@@ -1,7 +1,6 @@
 package com.zakariya.mymusicplayer.util
 
 import android.content.SharedPreferences
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zakariya.mymusicplayer.model.Song
@@ -13,7 +12,6 @@ object SharedPreferenceUtil {
     fun saveCurrentSong(currentSong: Song, sharedPreferences: SharedPreferences) {
         Gson().apply {
             val songJson = toJson(currentSong)
-            Log.i("MyPlayerService", songJson)
             with(sharedPreferences.edit()) {
                 putString(SAVE_CURRENT_SONG_KEY, songJson)
                 apply()
@@ -29,7 +27,14 @@ object SharedPreferenceUtil {
         }
     }
 
+    fun saveCurrentPosition(sharedPreferences: SharedPreferences, currentPosition: Int) {
+        with(sharedPreferences.edit()) {
+            putInt(Constants.CURRENT_SONG_DURATION_KEY, currentPosition)
+            apply()
+        }
+    }
+
     fun getPosition(sharedPreferences: SharedPreferences): Int {
-        return sharedPreferences.getInt(Constants.POSITION_KEY, -1)
+        return sharedPreferences.getInt(Constants.POSITION_KEY, 0)
     }
 }

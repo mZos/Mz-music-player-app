@@ -3,7 +3,6 @@ package com.zakariya.mymusicplayer.util
 import android.app.Activity
 import android.content.*
 import android.os.IBinder
-import android.util.Log
 import androidx.core.content.ContextCompat
 import com.zakariya.mymusicplayer.model.Song
 import com.zakariya.mymusicplayer.services.PlayerService
@@ -32,10 +31,7 @@ object MusicPlayerRemote {
     }
 
     fun playPreviousSong() {
-        Log.i("testingNotification", "outside")
         if (playerService != null) {
-            Log.i("testingNotification", "inside")
-
             playerService?.playPrevious()
         }
     }

@@ -66,10 +66,4 @@ class SongFragment : Fragment(R.layout.fragment_song) {
     private fun initLayoutManager() {
         rvSongs.layoutManager = LinearLayoutManager(activity as Context)
     }
-
-    private fun restartPlayerFragment() {
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.playerFragmentContainer, PlayerFragment())
-            .commit()
-    }
 }
