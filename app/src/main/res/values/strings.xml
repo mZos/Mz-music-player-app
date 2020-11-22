@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Mz Music</string>
+    <string name="txt_no_song">No is song playing, play a song to see controls</string>
 </resources>
