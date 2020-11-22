@@ -27,7 +27,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:defaultNavHost="true"
-                app:navGraph="@navigation/nav_graph" />
+                app:navGraph="@navigation/nav_graph"
+                tools:ignore="FragmentTagUsage" />
         </FrameLayout>
     </LinearLayout>
 
@@ -51,7 +52,7 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/playerFragmentContainer"
-            android:name="com.zakariya.mymusicplayer.ui.fragment.PlayerFragment"
+            android:name="com.zakariya.mzmusicplayer.ui.fragment.PlayerFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
@@ -60,7 +61,8 @@
             android:name="com.zakariya.mzmusicplayer.ui.fragment.MiniPlayerFragment"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            tools:layout="@layout/fragment_mini_player" />
+            tools:layout="@layout/fragment_mini_player"
+            tools:ignore="FragmentTagUsage" />
 
     </FrameLayout>
 
