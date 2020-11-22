@@ -43,9 +43,8 @@ class SongsAdapter(
         activity.lifecycleScope.launch(Dispatchers.IO) {
             val imgByte = getSongThumbnail(songs.path)
             withContext(Dispatchers.Main) {
-                if (imgByte != null)
-                    Glide.with(context).asBitmap().load(imgByte).error(R.drawable.ic_album)
-                        .into(holder.itemView.imgThumbnail)
+                Glide.with(context).asBitmap().load(imgByte).error(R.drawable.ic_album)
+                    .into(holder.itemView.imgThumbnail)
             }
         }
 
