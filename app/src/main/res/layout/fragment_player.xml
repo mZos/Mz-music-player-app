@@ -145,7 +145,8 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_play"
                 app:backgroundTint="@color/colorAccent"
-                app:elevation="0dp" />
+                app:elevation="0dp"
+                tools:ignore="ContentDescription" />
 
             <ImageView
                 android:id="@+id/btnNext"
