@@ -3,7 +3,6 @@ package com.zakariya.mzmusicplayer.ui.fragment
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.SeekBar
 import android.widget.Toast
@@ -27,8 +26,6 @@ import kotlinx.coroutines.launch
 
 class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener, SongChangeNotifier,
     PlayPauseStateNotifier, SeekCompletionNotifier {
-
-    private val TAG = "My" + this::class.java.simpleName
 
     private lateinit var viewModel: SongViewModel
     private lateinit var sharedPreferences: SharedPreferences
@@ -56,30 +53,35 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        txtSongTitle.isSelected = true
-        txtArtistName.isSelected = true
-        updateUi()
 
-        fabPlayPause.setOnClickListener(this)
-        btnNext.setOnClickListener(this)
-        btnPrevious.setOnClickListener(this)
-        btnPlayList.setOnClickListener(this)
-        btnShuffle.setOnClickListener(this)
+        if (SharedPreferenceUtil.getCurrentSong(sharedPreferences) != null) {
+            txtSongTitle.isSelected = true
+            txtArtistName.isSelected = true
+            updateUi()
 
-        setUpPlayPauseButton()
+            fabPlayPause.setOnClickListener(this)
+            btnNext.setOnClickListener(this)
+            btnPrevious.setOnClickListener(this)
+            btnPlayList.setOnClickListener(this)
+            btnShuffle.setOnClickListener(this)
 
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    MusicPlayerRemote.seekTo(progress)
-                    txtStartDuration.text = millisToString(progress)
+            setUpPlayPauseButton()
+
+            seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                    if (fromUser) {
+                        MusicPlayerRemote.seekTo(progress)
+                        txtStartDuration.text = millisToString(progress)
+                    }
                 }
-            }
 
-            override fun onStartTrackingTouch(p0: SeekBar?) = Unit
-            override fun onStopTrackingTouch(p0: SeekBar?) = Unit
-        })
-
+                override fun onStartTrackingTouch(p0: SeekBar?) = Unit
+                override fun onStopTrackingTouch(p0: SeekBar?) = Unit
+            })
+        } else {
+            rlPlayer.visibility = View.GONE
+            txtEmptySong.visibility = View.VISIBLE
+        }
     }
 
     override fun onResume() {
@@ -131,8 +133,6 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
         if (activity != null)
             setUpSeekBar()
     }
-
-    private fun iLog(message: String) = Log.i(TAG, message)
 
     private fun updateUi() {
         if (currentSong != null) {
