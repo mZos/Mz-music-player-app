@@ -57,7 +57,7 @@
 
         <fragment
             android:id="@+id/miniPlayerFragment"
-            android:name="com.zakariya.mymusicplayer.ui.fragment.MiniPlayerFragment"
+            android:name="com.zakariya.mzmusicplayer.ui.fragment.MiniPlayerFragment"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             tools:layout="@layout/fragment_mini_player" />

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.zakariya.mymusicplayer">
+    package="com.zakariya.mzmusicplayer">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -16,20 +16,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="q">
-        <activity android:name=".ui.activity.SplashActivity">
+        <activity android:name="com.zakariya.mzmusicplayer.ui.activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.MainActivity" />
+        <activity android:name="com.zakariya.mzmusicplayer.ui.activity.MainActivity" />
 
         <service
-            android:name=".services.PlayerService"
+            android:name="com.zakariya.mzmusicplayer.services.PlayerService"
             android:enabled="true" />
         <receiver
-            android:name=".receivers.NotificationActionBroadcastReceiver"
+            android:name="com.zakariya.mzmusicplayer.receivers.NotificationActionBroadcastReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="action previous" />

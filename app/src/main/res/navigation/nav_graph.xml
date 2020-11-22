@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/songFragment"
-        android:name="com.zakariya.mymusicplayer.ui.fragment.SongFragment"
+        android:name="com.zakariya.mzmusicplayer.ui.fragment.SongFragment"
         android:label="fragment_song"
         tools:layout="@layout/fragment_song" />
     <fragment
         android:id="@+id/albumFragment"
-        android:name="com.zakariya.mymusicplayer.ui.fragment.AlbumFragment"
+        android:name="com.zakariya.mzmusicplayer.ui.fragment.AlbumFragment"
         android:label="AlbumFragment" />
     <fragment
         android:id="@+id/artistFragment"
-        android:name="com.zakariya.mymusicplayer.ui.fragment.ArtistFragment"
+        android:name="com.zakariya.mzmusicplayer.ui.fragment.ArtistFragment"
         android:label="ArtistFragment" />
     <fragment
         android:id="@+id/favouriteFragment"
-        android:name="com.zakariya.mymusicplayer.ui.fragment.FavouriteFragment"
+        android:name="com.zakariya.mzmusicplayer.ui.fragment.FavouriteFragment"
         android:label="FavouriteFragment" />
 </navigation>
