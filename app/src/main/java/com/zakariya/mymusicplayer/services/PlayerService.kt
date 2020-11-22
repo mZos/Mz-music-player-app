@@ -110,14 +110,14 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         if (intent != null && intent.action != null) {
-            val action = intent.action
-            when (action) {
+            when (intent.action) {
                 ACTION_PREVIOUS -> {
                     playPrevious()
                 }
                 ACTION_PLAY_PAUSE -> {
                     playPause()
                     restartNotification()
+                    if (!isPlaying()) stopForeground(false)
                 }
                 ACTION_NEXT -> {
                     playNext()
@@ -125,7 +125,7 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
                 else -> Unit
             }
         }
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     override fun onCompletion(mp: MediaPlayer?) {
@@ -276,7 +276,8 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
 
     //initialize MediaPlayer and play
     private fun initMediaPlayer(position: Int) {
-        this.currentSong = listOfAllSong[position]
+        if (position != -1)
+            this.currentSong = listOfAllSong[position]
         SharedPreferenceUtil.saveCurrentSong(currentSong!!, sharedPreferences)
 
         mediaPlayer?.reset()
@@ -376,12 +377,10 @@ class PlayerService : Service(), MediaPlayer.OnCompletionListener, MediaPlayer.O
         if (mediaPlayer != null) {
             if (isPlaying()) {
                 pause(false)
-
                 with(sharedPreferences.edit()) {
                     putInt(POSITION_KEY, position)
                     apply()
                 }
-
                 if (requestAudioFocus())
                     removeAudioFocus()
             } else {
