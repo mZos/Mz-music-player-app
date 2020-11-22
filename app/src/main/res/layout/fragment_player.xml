@@ -2,12 +2,25 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/playerFrameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
     tools:context=".ui.fragment.PlayerFragment">
 
+    <TextView
+        android:id="@+id/txtEmptySong"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="15dp"
+        android:text="@string/txt_no_song"
+        android:visibility="gone"
+        android:textAlignment="center"
+        android:textSize="20sp" />
+
     <RelativeLayout
+        android:id="@+id/rlPlayer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:ignore="UselessParent">
@@ -51,8 +64,8 @@
                 android:singleLine="true"
                 android:textColor="@android:color/white"
                 android:textSize="20sp"
-                tools:text="@tools:sample/lorem/random"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="@tools:sample/lorem/random" />
 
             <TextView
                 android:id="@+id/txtArtistName"
@@ -68,8 +81,8 @@
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:textColor="@color/grey"
-                tools:text="@tools:sample/full_names"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:text="@tools:sample/full_names" />
         </LinearLayout>
         <!-- seek bar and duration -->
         <RelativeLayout
