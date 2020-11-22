@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.zakariya.mzmusicplayer.R
 import com.zakariya.mzmusicplayer.model.Song
-import com.zakariya.mzmusicplayer.ui.fragment.SongFragment
+import com.zakariya.mzmusicplayer.ui.activity.MainActivity
 import com.zakariya.mzmusicplayer.util.MusicPlayerRemote
 import kotlinx.android.synthetic.main.single_song_item.view.*
 import kotlinx.coroutines.Dispatchers
@@ -39,11 +39,13 @@ class SongsAdapter(
         holder.itemView.txtSongName.text = songs.name
         holder.itemView.txtArtistName.text = songs.artistName
 
-        SongFragment().lifecycleScope.launch(Dispatchers.IO) {
+        val activity = context as MainActivity
+        activity.lifecycleScope.launch(Dispatchers.IO) {
             val imgByte = getSongThumbnail(songs.path)
             withContext(Dispatchers.Main) {
-                Glide.with(context).asBitmap().load(imgByte).error(R.drawable.ic_album)
-                    .into(holder.itemView.imgThumbnail)
+                if (imgByte != null)
+                    Glide.with(context).asBitmap().load(imgByte).error(R.drawable.ic_album)
+                        .into(holder.itemView.imgThumbnail)
             }
         }
 
