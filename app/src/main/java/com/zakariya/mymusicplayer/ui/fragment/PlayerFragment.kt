@@ -128,7 +128,8 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
     }
 
     override fun onSeekComplete() {
-        setUpSeekBar()
+        if (activity != null)
+            setUpSeekBar()
     }
 
     private fun iLog(message: String) = Log.i(TAG, message)
