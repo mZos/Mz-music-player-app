@@ -22,7 +22,7 @@
                 android:layout_width="340dp"
                 android:layout_height="340dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="48dp"
+                android:layout_marginTop="58dp"
                 android:elevation="10dp"
                 app:cardCornerRadius="6dp">
 
@@ -51,6 +51,7 @@
                 android:singleLine="true"
                 android:textColor="@android:color/white"
                 android:textSize="20sp"
+                tools:text="@tools:sample/lorem/random"
                 android:textStyle="bold" />
 
             <TextView
@@ -59,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="25dp"
                 android:layout_marginEnd="15dp"
                 android:ellipsize="marquee"
                 android:freezesText="true"
@@ -67,6 +68,7 @@
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:textColor="@color/grey"
+                tools:text="@tools:sample/full_names"
                 android:textSize="16sp" />
         </LinearLayout>
         <!-- seek bar and duration -->
@@ -74,7 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/playerControls"
-            android:layout_marginBottom="30dp">
+            android:layout_marginBottom="38dp">
 
             <TextView
                 android:id="@+id/txtStartDuration"
@@ -142,6 +144,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_play"
+                app:backgroundTint="@color/colorAccent"
                 app:elevation="0dp" />
 
             <ImageView
