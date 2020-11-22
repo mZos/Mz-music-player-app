@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#393e46</color>
-    <color name="colorPrimaryDark">#232931</color>
-    <color name="colorAccent">#4ecca3</color>
-    <color name="holoWhite">#eeeeee</color>
-    <color name="grey">#c1c1c1</color>
+    <color name="colorPrimary">#353941</color>
+    <color name="colorPrimaryDark">#26282b</color>
+    <color name="colorAccent">#4486F4</color>
+    <color name="holoWhite">#EEEEEE</color>
+    <color name="grey">#C1C1C1</color>
 </resources>
