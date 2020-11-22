@@ -122,7 +122,7 @@ open class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         bottomSheetBehavior.removeBottomSheetCallback(bottomSheetCallback)
-        MusicPlayerRemote.unbindFromService(serviceToken)
+        //MusicPlayerRemote.unbindFromService(serviceToken)
     }
 
     override fun onBackPressed() {
