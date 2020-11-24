@@ -117,7 +117,8 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
             setUpSeekBar()
             setUpPlayPauseButton()
         }
-        MusicPlayerRemote.playerService?.restartNotification()
+        if (MusicPlayerRemote.playerService != null)
+            MusicPlayerRemote.playerService!!.restartNotification()
     }
 
     override fun onPlayPauseStateChange() {
