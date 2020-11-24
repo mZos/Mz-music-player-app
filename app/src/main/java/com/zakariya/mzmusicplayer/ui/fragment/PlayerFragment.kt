@@ -38,10 +38,10 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (MusicPlayerRemote.playerService != null) {
-            MusicPlayerRemote.playerService?.setSongChangeCallback(this)
-            MusicPlayerRemote.playerService?.setPlayPauseStateCallback(this)
-            MusicPlayerRemote.playerService?.setSeekCompleteNotifierCallback(this)
+        if (playerService != null) {
+            playerService!!.setSongChangeCallback(this)
+            playerService!!.setPlayPauseStateCallback(this)
+            playerService!!.setSeekCompleteNotifierCallback(this)
         }
 
         val repository = SongRepository(requireContext())
@@ -117,8 +117,8 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
             setUpSeekBar()
             setUpPlayPauseButton()
         }
-        if (MusicPlayerRemote.playerService != null)
-            MusicPlayerRemote.playerService!!.restartNotification()
+        if (playerService != null)
+            playerService!!.restartNotification()
     }
 
     override fun onPlayPauseStateChange() {
@@ -126,8 +126,10 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
             setUpSeekBar()
             setUpPlayPauseButton()
         }
-        MusicPlayerRemote.playerService?.setMediaSessionAction()
-        MusicPlayerRemote.playerService?.restartNotification()
+        if (playerService != null) {
+            playerService!!.setMediaSessionAction()
+            playerService!!.restartNotification()
+        }
     }
 
     override fun onSeekComplete() {
@@ -185,9 +187,9 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
     }
 
     private fun setUpPlayPauseButton() {
-        if (MusicPlayerRemote.playerService != null &&
-            MusicPlayerRemote.playerService?.mediaPlayer != null &&
-            MusicPlayerRemote.playerService!!.isPlaying()
+        if (playerService != null &&
+            playerService!!.mediaPlayer != null &&
+            playerService!!.isPlaying()
         ) {
             fabPlayPause.setImageResource(R.drawable.ic_pause)
         } else {
