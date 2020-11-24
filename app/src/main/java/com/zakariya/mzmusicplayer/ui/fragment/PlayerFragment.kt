@@ -186,7 +186,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player), View.OnClickListener,
 
     private fun setUpPlayPauseButton() {
         if (MusicPlayerRemote.playerService != null && MusicPlayerRemote.playerService?.mediaPlayer != null) {
-            if (MusicPlayerRemote.playerService?.mediaPlayer!!.isPlaying) {
+            if (MusicPlayerRemote.playerService!!.isPlaying()) {
                 fabPlayPause.setImageResource(R.drawable.ic_pause)
             } else {
                 fabPlayPause.setImageResource(R.drawable.ic_play)
