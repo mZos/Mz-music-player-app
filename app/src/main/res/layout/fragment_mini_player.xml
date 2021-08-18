@@ -50,24 +50,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical">
 
-            <com.google.android.material.progressindicator.ProgressIndicator
-                android:id="@+id/progressBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:circularRadius="16dp"
-                app:indicatorColor="@color/colorAccent"
-                android:progressBackgroundTint="@color/colorPrimaryDark"
-                app:indicatorType="circular"
-                app:linearSeamless="true"
-                tools:progress="10" />
-
             <ImageView
                 android:id="@+id/miniPlayerPlayPauseButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:scaleType="center"
-                android:src="@drawable/ic_pause" />
+                android:src="@drawable/ic_pause"
+                android:contentDescription="@string/play_pause_button" />
         </FrameLayout>
     </LinearLayout>
 </FrameLayout>
